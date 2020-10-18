@@ -1,18 +1,23 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class test {
 
-	private int m=3;// degree of the tree
+	private int m=4;// degree of the tree
 	
-	private Node root;// root of BplusTree
+	public Node root;// root of BplusTree
 	public static  int counter=0;
+	
 	//constuctor for b plus tree
 	public test() {
 		
@@ -220,7 +225,7 @@ public class test {
 
 	}
 	
-	public void printTree() {
+	public int printTree() {
 		int numofNodes=0;
 		Queue<Node> queue = new LinkedList<Node>();
 		queue.add(this.root);
@@ -240,6 +245,7 @@ public class test {
 			}
 
 			printNode(curr);
+			numofNodes++;
 
 			if (curr.getChildren().isEmpty()) {
 				break;
@@ -248,7 +254,6 @@ public class test {
 				queue.add(curr.getChildren().get(i));
 			}
 		}
-
 		curr = curr.getNext();
 		while (null != curr) {
 		
@@ -257,11 +262,12 @@ public class test {
 		}
 		System.out.println();
 		System.out.println("The height of the tree is " +(levelNumber-1));
-
+		
+		return numofNodes;
+		
 	}
 //	print the nodes of the tree
 	private void printNode(Node curr) {
-	
 	
 		for (int i = 0; i < curr.getKeys().size(); i++) {
 			System.out.print(curr.getKeys().get(i).getKey() + ":(");
@@ -270,12 +276,68 @@ public class test {
 				values = values + curr.getKeys().get(i).getValues().get(j) + ",";
 				counter+=1;
 			}
-			System.out.print(values.isEmpty() ? ");" : values.substring(0, values.length() - 1) + ");");
+			//System.out.print(values.isEmpty() ? ");" : values.substring(0, values.length() - 1) + ");");
 		}
 		System.out.print("||");
 		
 //		System.out.println("The number of nodes is "+counter);
 	}
+	public void deleteKey(Node node,double key)
+	{
+//		case 1:there is more than minimum number of keys in the node. simpply delete the keys
+		
+		
+		int indexOfKey = binarySearchWithinInternalNode(key, node.getKeys());
+		System.out.println(indexOfKey);
+		
+	}
+//	public void delete(K key) {
+//		if(key == null || root == null) {
+//			return;
+//		}
+//
+//		// Check if entry key exist in the leaf node
+//		LeafNode<K,T> leaf = (LeafNode<K,T>)treeSearch(root, key);
+//		if(leaf == null) {
+//			return;
+//		}
+//		
+//		// Delete entry from subtree with root node pointer
+//		Entry<K, Node<K,T>> entry = new AbstractMap.SimpleEntry<K, Node<K,T>>(key, leaf);
+//		
+//		// oldChildEntry null initially, and null upon return unless child deleted
+//		Entry<K, Node<K,T>> oldChildEntry = deleteChildEntry(root, root, entry, null);
+//		
+//		// Readjust the root, no child is deleted
+//		if(oldChildEntry == null) {
+//			if(root.keys.size() == 0) {
+//				if(!root.isLeafNode) {
+//					root = ((IndexNode<K,T>) root).children.get(0);
+//				}
+//			}
+//			return;
+//		}
+//		// Child is deleted
+//		else {
+//			// Find empty node
+//			int i = 0;
+//			K oldKey = oldChildEntry.getKey();
+//			while(i < root.keys.size()) {
+//				if(oldKey.compareTo(root.keys.get(i)) == 0) {
+//					break;
+//				}
+//				i++;
+//			}
+//			// Return if empty node already discarded
+//			if(i == root.keys.size()) {
+//				return;
+//			}
+//			// Discard empty node
+//			root.keys.remove(i);
+//			((IndexNode<K,T>)root).children.remove(i+1);
+//			return;
+//		}
+//	}
 
 	/**
 	 * Modified Binary search within internal node.
@@ -350,6 +412,7 @@ public class test {
 
 		return searchValues;
 	}
+	
 
 	/**
 	 * Search for all key values pairs between key1 and key2.
@@ -389,6 +452,7 @@ public class test {
 		return searchKeys;
 	}
 	
+	
 	public List<Records> retrieveTconstantwithAverageRating(int avgRating)
 	{
 		List<Records> searchValues = null;
@@ -397,43 +461,104 @@ public class test {
 	
 	  public static void main(String[] args) 
 	  {
-			test tree=new test();
-//			BufferedReader TSVFile;
-//			try {
-//				TSVFile = new BufferedReader(new FileReader("C:\\Users\\byeby\\eclipse-workspace\\data.tsv"));
-//				String dataRow = TSVFile.readLine();
+			test tree=new test();		
+//			Records r=new Records("tt000000",5.6,1645);
+//			tree.insert(r.averagerating, r);
+//			Records a=new Records("tt000001",6.1,198);
+//			tree.insert(a.averagerating, a);
+//			Records c=new Records("tt000002",5.1,203);
+//			tree.insert(c.averagerating, c);
 //			
-//			} catch (FileNotFoundException | IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		
-			
-			Records r=new Records("tt000000",5.6,1645);
-			tree.insert(r.averagerating, r);
-			Records a=new Records("tt000001",6.1,198);
-			tree.insert(a.averagerating, a);
-			Records c=new Records("tt000002",5.1,203);
-			tree.insert(c.averagerating, c);
-			
-			Records d=new Records("tt000002",5.1,203);
-			tree.insert(d.averagerating, d);
-			
-			tree.insert(d.averagerating, d);
-
-			tree.insert(d.averagerating, d);
-
-			Records f=new Records("tt000003",9.1,903);
-			tree.insert(f.averagerating, f);
-			
-			tree.printTree();
-			System.out.println("The number of nodes is "+ counter);
+//			Records d=new Records("tt000002",5.1,203);
+//			tree.insert(d.averagerating, d);
+//			
+//			tree.insert(d.averagerating, d);
+//
+//			tree.insert(d.averagerating, d);
+//
+//			Records f=new Records("tt000003",9.1,903);
+//			tree.insert(f.averagerating, f);
+//			
+//			tree.printTree();
+//			
+//			tree.deleteKey(tree.root,5.1);
+//			System.out.println("The number of nodes is "+ counter);
 	
 //			System.out.println(tree.search(6.1, 9.1).toString());
 //			System.out.println(tree.search(5.1));
 //			System.out.println(tree.search(15.52));
+			
+			List<blocks> blo = new ArrayList<blocks>();
+			
+		    ArrayList<String> Data = new ArrayList<>(); //initializing a new ArrayList out of String[]'s
+		    try (BufferedReader TSVReader = new BufferedReader(new FileReader("D:\\Year 3 Sem 1\\Database System\\data.tsv"))) {
+		        String line = null;
+		        blocks rblock= new blocks();
+		        blo.add(rblock);
+		        int i=0;
+		        while ((line = TSVReader.readLine()) != null) {
+		        	if(i!=0)
+		        	{
+		        		String[] lineItems = line.split("\t"); //splitting the line and adding its items in String[]
+				        Records rdata=new Records(lineItems[0],Double.parseDouble(lineItems[1]), Integer.parseInt(lineItems[2]));
+				        tree.insert(Double.parseDouble(lineItems[1]), rdata);
+				        
+				        if(rblock.recordlist.size()==4)
+				         {
+				            rblock=new blocks();
+				            blo.add(rblock);
+				           	rblock.recordlist.add(rdata);
+				         }
+				         else
+				         {
+				        	 rblock.recordlist.add(rdata);
+				         }
+				           
+		        	}
+		        	i++;
 
+//		            Data.add(lineItems); //adding the splitted line array to the ArrayList
+		        }
+			    tree.printTree();
+		        
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
+	
+//		    one data block is equal to 100
+		    System.out.println("The number of blocks "+ blo.size());
+		    System.out.println("The size of database "+blo.size()*100);
+		    
+//			tree.printTree(); 
+//			int No_of_nodes= tree.printTree();
+////			need multply by node size
+//			int calculateSize;
+////			my degree is 4 so 8 *4 bytes, Since is 8
+//			calculateSize= No_of_nodes* 96;
+			
+			
+//			Experiment 3
+//			tree.search(key)
 	  }
+//	  public static ArrayList<String[]> tsvr() throws IOException {
+//		 
+//		    ArrayList<String> Data = new ArrayList<>(); //initializing a new ArrayList out of String[]'s
+//		    try (BufferedReader TSVReader = new BufferedReader(new FileReader("D:\\Year 3 Sem 1\\Database System.data.tsv"))) {
+//		        String line = null;
+//		        while ((line = TSVReader.readLine()) != null) {
+//		            String[] lineItems = line.split("\t"); //splitting the line and adding its items in String[]
+//		            
+//		            Data.add(lineItems); //adding the splitted line array to the ArrayList
+//		        }
+//		    } catch (Exception e) {
+//		        System.out.println("Something went wrong");
+//		    }
+//		    Data.forEach(array -> System.out.println(Arrays.toString(array)));
+//		
+//		 
+//	  }
+	 
+
 
 }
 
@@ -443,6 +568,23 @@ class Records
 	double averagerating;
 	int numofvote;
 	
+	public double getAveragerating() {
+		return averagerating;
+	}
+	public void setAveragerating(double averagerating) {
+		this.averagerating = averagerating;
+	}
+	public int getNumofvote() {
+		return numofvote;
+	}
+	public void setNumofvote(int numofvote) {
+		this.numofvote = numofvote;
+	}
+	public void setTconstant(String tconstant) {
+		this.tconstant = tconstant;
+	}
+	
+	
 	Records(String constant, double avg, int vote)
 	{
 		this.tconstant=constant;
@@ -450,4 +592,13 @@ class Records
 		this.numofvote=vote;
 	}
 
+}
+class blocks
+{
+	public List<Records> recordlist= new ArrayList<Records>();
+	public void addRecord(Records data)
+	{
+		recordlist.add(data);
+	}
+	
 }
