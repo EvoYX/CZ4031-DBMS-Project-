@@ -391,19 +391,23 @@ public class test {
 	 */
 	public List<Records> search(double key) {
 		List<Records> searchValues = null;
-
+		int numNodes=0;
 		Node curr = this.root;
 		// Traverse to the corresponding external node that would 'should'
 		// contain this key
 		while (curr.getChildren().size() != 0) {
 			curr = curr.getChildren().get(binarySearchWithinInternalNode(key, curr.getKeys()));
 		}
+		
 		List<Keys> keyList = curr.getKeys();
 		// Do a linear search in this node for the key. Set the parameter
 		// 'searchValues' only if success
 		for (int i = 0; i < keyList.size(); i++) {
 			if (key == keyList.get(i).getKey()) {
 				searchValues = keyList.get(i).getValues();
+				numNodes++;
+				System.out.println("The node it is accessing is "+ searchValues);
+				System.out.println("The number of node it is accessing is "+ numNodes);
 			}
 			if (key < keyList.get(i).getKey()) {
 				break;
@@ -462,32 +466,9 @@ public class test {
 	  public static void main(String[] args) 
 	  {
 			test tree=new test();		
-//			Records r=new Records("tt000000",5.6,1645);
-//			tree.insert(r.averagerating, r);
-//			Records a=new Records("tt000001",6.1,198);
-//			tree.insert(a.averagerating, a);
-//			Records c=new Records("tt000002",5.1,203);
-//			tree.insert(c.averagerating, c);
-//			
-//			Records d=new Records("tt000002",5.1,203);
-//			tree.insert(d.averagerating, d);
-//			
-//			tree.insert(d.averagerating, d);
-//
-//			tree.insert(d.averagerating, d);
-//
-//			Records f=new Records("tt000003",9.1,903);
-//			tree.insert(f.averagerating, f);
-//			
-//			tree.printTree();
-//			
-//			tree.deleteKey(tree.root,5.1);
-//			System.out.println("The number of nodes is "+ counter);
-	
-//			System.out.println(tree.search(6.1, 9.1).toString());
-//			System.out.println(tree.search(5.1));
-//			System.out.println(tree.search(15.52));
+
 			
+			System.out.println("--------------------Experiment 1 and 2----------------------");
 			List<blocks> blo = new ArrayList<blocks>();
 			
 		    ArrayList<String> Data = new ArrayList<>(); //initializing a new ArrayList out of String[]'s
@@ -506,6 +487,7 @@ public class test {
 				        if(rblock.recordlist.size()==4)
 				         {
 				            rblock=new blocks();
+				    
 				            blo.add(rblock);
 				           	rblock.recordlist.add(rdata);
 				         }
@@ -519,7 +501,7 @@ public class test {
 
 //		            Data.add(lineItems); //adding the splitted line array to the ArrayList
 		        }
-			    tree.printTree();
+//			    tree.printTree();
 		        
 		    } catch (Exception e) {
 		        e.printStackTrace();
@@ -529,7 +511,7 @@ public class test {
 		    System.out.println("The number of blocks "+ blo.size());
 		    System.out.println("The size of database "+blo.size()*100);
 		    
-//			tree.printTree(); 
+
 //			int No_of_nodes= tree.printTree();
 ////			need multply by node size
 //			int calculateSize;
@@ -538,27 +520,50 @@ public class test {
 			
 			
 //			Experiment 3
-//			tree.search(key)
-	  }
-//	  public static ArrayList<String[]> tsvr() throws IOException {
-//		 
-//		    ArrayList<String> Data = new ArrayList<>(); //initializing a new ArrayList out of String[]'s
-//		    try (BufferedReader TSVReader = new BufferedReader(new FileReader("D:\\Year 3 Sem 1\\Database System.data.tsv"))) {
-//		        String line = null;
-//		        while ((line = TSVReader.readLine()) != null) {
-//		            String[] lineItems = line.split("\t"); //splitting the line and adding its items in String[]
-//		            
-//		            Data.add(lineItems); //adding the splitted line array to the ArrayList
-//		        }
-//		    } catch (Exception e) {
-//		        System.out.println("Something went wrong");
-//		    }
-//		    Data.forEach(array -> System.out.println(Arrays.toString(array)));
-//		
-//		 
-//	  }
-	 
+		    System.out.println("------------------Experiment 3-----------------");
+			List<Records> tconstValue= tree.search(8);
+			for(int i= 0; i<tconstValue.size();i++)
+			{
+				//limit the max output to be 20 entries due to the huge amount of data
+				if(i<=20)
+				{
+					//printing of tconst value
+					System.out.println(" The t constant value is " + tconstValue.get(i).tconstant);
+				}
+				else 
+				{
+					break;
+				}
+			}
+//			Print out the number of blocks and the block data
+			int blockCounter=0;
+			for(int j=0; j<blo.size();j++)
+			{
+				List<Records> dataBlo =	blo.get(j).recordlist;
+			
+				for(int a=0;a<dataBlo.size();a++)
+				{
+					if(dataBlo.get(a).averagerating==8)
+					{
+						blockCounter++;
+						
+						for(int b=0; b<dataBlo.size();b++)
+						{
+								
+							Records r = dataBlo.get(b);
+							System.out.println("Tconst is "+ r.tconstant + " Average Rating is "+ r.averagerating + " Number of votes is "+ r.numofvote);
+							
+						}
+						break;
+						
+						
+					}
+				}
 
+			}
+			System.out.print("Number of blocks: " + blockCounter);
+			
+	  }
 
 }
 
