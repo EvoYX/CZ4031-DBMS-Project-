@@ -1,18 +1,23 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class test {
 
-	private int m=3;// degree of the tree
+	private int m=4;// degree of the tree
 	
-	private Node root;// root of BplusTree
+	public Node root;// root of BplusTree
 	public static  int counter=0;
+	
 	//constuctor for b plus tree
 	public test() {
 		
@@ -220,7 +225,7 @@ public class test {
 
 	}
 	
-	public void printTree() {
+	public int printTree() {
 		int numofNodes=0;
 		Queue<Node> queue = new LinkedList<Node>();
 		queue.add(this.root);
@@ -240,6 +245,7 @@ public class test {
 			}
 
 			printNode(curr);
+			numofNodes++;
 
 			if (curr.getChildren().isEmpty()) {
 				break;
@@ -248,7 +254,6 @@ public class test {
 				queue.add(curr.getChildren().get(i));
 			}
 		}
-
 		curr = curr.getNext();
 		while (null != curr) {
 		
@@ -257,11 +262,12 @@ public class test {
 		}
 		System.out.println();
 		System.out.println("The height of the tree is " +(levelNumber-1));
-
+		
+		return numofNodes;
+		
 	}
 //	print the nodes of the tree
 	private void printNode(Node curr) {
-	
 	
 		for (int i = 0; i < curr.getKeys().size(); i++) {
 			System.out.print(curr.getKeys().get(i).getKey() + ":(");
@@ -270,11 +276,19 @@ public class test {
 				values = values + curr.getKeys().get(i).getValues().get(j) + ",";
 				counter+=1;
 			}
-			System.out.print(values.isEmpty() ? ");" : values.substring(0, values.length() - 1) + ");");
+			//System.out.print(values.isEmpty() ? ");" : values.substring(0, values.length() - 1) + ");");
 		}
 		System.out.print("||");
 		
 //		System.out.println("The number of nodes is "+counter);
+	}
+	public void deleteKey(Node node,double key)
+	{
+//		case 1:there is more than minimum number of keys in the node. simpply delete the keys
+
+		int indexOfKey = binarySearchWithinInternalNode(key, node.getKeys());
+		System.out.println(indexOfKey);
+		
 	}
 
 	/**
@@ -329,7 +343,7 @@ public class test {
 	 */
 	public List<Records> search(double key) {
 		List<Records> searchValues = null;
-
+		int numNodes=0;
 		Node curr = this.root;
 		// Traverse to the corresponding external node that would 'should'
 		// contain this key
@@ -342,6 +356,9 @@ public class test {
 		for (int i = 0; i < keyList.size(); i++) {
 			if (key == keyList.get(i).getKey()) {
 				searchValues = keyList.get(i).getValues();
+				numNodes++;
+				System.out.println("The node it is accessing is "+ searchValues);
+				System.out.println("The number of node it is accessing is "+ numNodes);
 			}
 			if (key < keyList.get(i).getKey()) {
 				break;
@@ -350,6 +367,7 @@ public class test {
 
 		return searchValues;
 	}
+	
 
 	/**
 	 * Search for all key values pairs between key1 and key2.
@@ -361,9 +379,9 @@ public class test {
 	 * @return the list of key value pairs between the two keys
 	 */
 	
-	public List<Keys> search(double key1, double key2) {
+	public List<Records> search(double key1, double key2) {
 		//System.out.println("Searching between keys " + key1 + ", " + key2);
-		List<Keys> searchKeys = new ArrayList<>();
+		List<Records> searchKeys = new ArrayList<>();
 		Node currNode = this.root;
 		// Traverse to the corresponding external node that would 'should'
 		// contain starting key (key1)
@@ -373,7 +391,6 @@ public class test {
 		
 		// Start from current node and add keys whose value lies between key1 and key2 with their corresponding pairs
 		// Stop if end of list is encountered or if value encountered in list is greater than key2
-		
 		boolean endSearch = false;
 		while (null != currNode && !endSearch) {
 			for (int i = 0; i < currNode.getKeys().size(); i++) {
@@ -389,50 +406,119 @@ public class test {
 		return searchKeys;
 	}
 	
+	
 	public List<Records> retrieveTconstantwithAverageRating(int avgRating)
 	{
 		List<Records> searchValues = null;
 		return searchValues;
 	}
 	
-	  public static void main(String[] args) 
-	  {
-			test tree=new test();
-//			BufferedReader TSVFile;
-//			try {
-//				TSVFile = new BufferedReader(new FileReader("C:\\Users\\byeby\\eclipse-workspace\\data.tsv"));
-//				String dataRow = TSVFile.readLine();
-//			
-//			} catch (FileNotFoundException | IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		
-			
-			Records r=new Records("tt000000",5.6,1645);
-			tree.insert(r.averagerating, r);
-			Records a=new Records("tt000001",6.1,198);
-			tree.insert(a.averagerating, a);
-			Records c=new Records("tt000002",5.1,203);
-			tree.insert(c.averagerating, c);
-			
-			Records d=new Records("tt000002",5.1,203);
-			tree.insert(d.averagerating, d);
-			
-			tree.insert(d.averagerating, d);
+	public static void main(String[] args) 
+	 {
+		test tree=new test();		
 
-			tree.insert(d.averagerating, d);
-
-			Records f=new Records("tt000003",9.1,903);
-			tree.insert(f.averagerating, f);
 			
-			tree.printTree();
-			System.out.println("The number of nodes is "+ counter);
+		System.out.println("--------------------Experiment 1 and 2----------------------");
+		List<blocks> blo = new ArrayList<blocks>();
+		
+		ArrayList<String> Data = new ArrayList<>(); //initializing a new ArrayList out of String[]'s
+	    try (BufferedReader TSVReader = new BufferedReader(new FileReader("D:\\Year 3 Sem 1\\Database System\\data.tsv")))
+	    {
+	        String line = null;
+	        blocks rblock= new blocks();
+		    blo.add(rblock);
+		    int i=0;
+	        while ((line = TSVReader.readLine()) != null) 
+	        {
+		        if(i!=0)
+		        {
+		       		String[] lineItems = line.split("\t"); //splitting the line and adding its items in String[]
+			        Records rdata=new Records(lineItems[0],Double.parseDouble(lineItems[1]), Integer.parseInt(lineItems[2]));
+			        tree.insert(Double.parseDouble(lineItems[1]), rdata);
+				        
+			        if(rblock.recordlist.size()==4)
+			         {
+			            rblock=new blocks();
+				    
+			            blo.add(rblock);
+			           	rblock.recordlist.add(rdata);
+			         }
+			         else
+			         {
+			        	 rblock.recordlist.add(rdata);
+			         }
+				           
+	        	}
+		        i++;
+
+//		            Data.add(lineItems); //adding the splitted line array to the ArrayList
+		        }
+//			    tree.printTree();
+		        
+		  }catch (Exception e)
+	    {
+		    e.printStackTrace();
+		}
 	
-//			System.out.println(tree.search(6.1, 9.1).toString());
-//			System.out.println(tree.search(5.1));
-//			System.out.println(tree.search(15.52));
+//		    one data block is equal to 100
+	    System.out.println("The number of blocks "+ blo.size());
+	    System.out.println("The size of database "+blo.size()*100);
+		    
 
+//			int No_of_nodes= tree.printTree();
+////			need multply by node size
+//			int calculateSize;
+////			my degree is 4 so 8 *4 bytes, Since is 8
+//			calculateSize= No_of_nodes* 96;
+			
+			
+//			Experiment 3
+		    System.out.println("------------------Experiment 3-----------------");
+			List<Records> tconstValue= tree.search(8);
+			for(int i= 0; i<tconstValue.size();i++)
+			{
+				//limit the max output to be 20 entries due to the huge amount of data
+				if(i<=20)
+				{
+					//printing of tconst value
+					System.out.println(" The t constant value is " + tconstValue.get(i).tconstant);
+				}
+				else 
+				{
+					break;
+				}
+			}
+//			Print out the number of blocks and the block data
+			int blockCounter=0;
+			for(int j=0; j<blo.size();j++)
+			{
+				//put the block into the dataBlo arraylist
+				List<Records> dataBlo =	blo.get(j).recordlist;
+				
+				for(int a=0;a<dataBlo.size();a++)
+				{
+					if(dataBlo.get(a).averagerating==8)
+					{
+						blockCounter++;
+						
+						for(int b=0; b<dataBlo.size();b++)
+						{
+									
+							Records r = dataBlo.get(b);
+							System.out.println("Tconst is "+ r.tconstant + " Average Rating is "+ r.averagerating + " Number of votes is "+ r.numofvote);
+							
+						}
+						break;
+
+					}
+				}
+			}
+			
+			System.out.print("Number of blocks: " + blockCounter);
+			
+			System.out.println("------Experiement 4--------------");
+			
+			List <Records> rangeList= tree.search(7,9);
 	  }
 
 }
@@ -443,6 +529,23 @@ class Records
 	double averagerating;
 	int numofvote;
 	
+	public double getAveragerating() {
+		return averagerating;
+	}
+	public void setAveragerating(double averagerating) {
+		this.averagerating = averagerating;
+	}
+	public int getNumofvote() {
+		return numofvote;
+	}
+	public void setNumofvote(int numofvote) {
+		this.numofvote = numofvote;
+	}
+	public void setTconstant(String tconstant) {
+		this.tconstant = tconstant;
+	}
+	
+	
 	Records(String constant, double avg, int vote)
 	{
 		this.tconstant=constant;
@@ -450,4 +553,13 @@ class Records
 		this.numofvote=vote;
 	}
 
+}
+class blocks
+{
+	public List<Records> recordlist= new ArrayList<Records>();
+	public void addRecord(Records data)
+	{
+		recordlist.add(data);
+	}
+	
 }
